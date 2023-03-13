@@ -185,3 +185,225 @@
 2023-03-13 10:31:11.888  INFO 10308 --- [SpringApplicationShutdownHook] io.hawt.web.auth.AuthenticationFilter    : Destroying hawtio authentication filter
 2023-03-13 10:31:11.889  INFO 10308 --- [SpringApplicationShutdownHook] io.hawt.HawtioContextListener            : Destroying hawtio services
 2023-03-13 10:31:11.969  INFO 10308 --- [SpringApplicationShutdownHook] org.apache.activemq.artemis.core.server  : AMQ221002: Apache ActiveMQ Artemis Message Broker version 2.19.1 [f561d4b4-8b4f-11ed-b036-4c034f8a3e96] stopped, uptime 17.038 seconds
+2023-03-13 10:54:27.589  INFO 34700 --- [main] o.h.d.integration.rapidpro.Application   : Starting Application using Java 19.0.1 on DESKTOP-BIR2HG9 with PID 34700 (C:\Users\JohanGangsåsHole\Documents\integration-dhis2-whatsapp\target\classes started by JohanGangsåsHole in C:\Users\JohanGangsåsHole\Documents\integration-dhis2-whatsapp)
+2023-03-13 10:54:27.592 DEBUG 34700 --- [main] o.h.d.integration.rapidpro.Application   : Running with Spring Boot v2.7.4, Spring v5.3.23
+2023-03-13 10:54:27.592  INFO 34700 --- [main] o.h.d.integration.rapidpro.Application   : No active profile set, falling back to 1 default profile: "default"
+2023-03-13 10:54:29.011  INFO 34700 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8443 (https)
+2023-03-13 10:54:29.023  INFO 34700 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-03-13 10:54:29.023  INFO 34700 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-03-13 10:54:29.178  INFO 34700 --- [main] o.a.c.c.C.[.[.[/dhis2rapidpro]           : Initializing Spring embedded WebApplicationContext
+2023-03-13 10:54:29.179  INFO 34700 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1542 ms
+2023-03-13 10:54:29.305 ERROR 34700 --- [main] javax.management.mbeanserver             : The LogManager accessed before the "java.util.logging.manager" system property was set to "org.jboss.logmanager.LogManager". Results may be unexpected.
+2023-03-13 10:54:29.646  INFO 34700 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/management/h2-console'. Database available at 'jdbc:h2:./dhis2rapidpro'
+2023-03-13 10:54:29.836  INFO 34700 --- [main] o.s.b.a.e.web.ServletEndpointRegistrar   : Registered '/management/jolokia' to jolokia-actuator-endpoint
+2023-03-13 10:54:29.850  INFO 34700 --- [main] io.hawt.HawtioContextListener            : Initialising hawtio services
+2023-03-13 10:54:29.853  INFO 34700 --- [main] io.hawt.system.ConfigManager             : Configuration will be discovered via system properties
+2023-03-13 10:54:29.855  INFO 34700 --- [main] io.hawt.jmx.JmxTreeWatcher               : Welcome to Hawtio 2.16.2
+2023-03-13 10:54:29.867  INFO 34700 --- [main] i.h.w.auth.AuthenticationConfiguration   : Starting hawtio authentication filter, JAAS authentication disabled
+2023-03-13 10:54:29.870  INFO 34700 --- [main] io.hawt.web.auth.LoginRedirectFilter     : Hawtio loginRedirectFilter is using 1800 sec. HttpSession timeout
+2023-03-13 10:54:29.889  WARN 34700 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'application': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'RAPIDPRO_API_USERNAME' in value "${RAPIDPRO_API_USERNAME}"
+2023-03-13 10:54:29.909  INFO 34700 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2023-03-13 10:54:29.911  INFO 34700 --- [main] io.hawt.web.auth.AuthenticationFilter    : Destroying hawtio authentication filter
+2023-03-13 10:54:29.913  INFO 34700 --- [main] io.hawt.HawtioContextListener            : Destroying hawtio services
+2023-03-13 10:54:29.929  INFO 34700 --- [main] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2023-03-13 10:54:29.956 ERROR 34700 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'application': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'RAPIDPRO_API_USERNAME' in value "${RAPIDPRO_API_USERNAME}"
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:405) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1431) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:619) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918) ~[spring-context-5.3.23.jar:5.3.23]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.23.jar:5.3.23]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147) ~[spring-boot-2.7.4.jar:2.7.4]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:734) ~[spring-boot-2.7.4.jar:2.7.4]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.4.jar:2.7.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308) ~[spring-boot-2.7.4.jar:2.7.4]
+	at org.hisp.dhis.integration.rapidpro.Application.main(Application.java:204) ~[classes/:na]
+Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'RAPIDPRO_API_USERNAME' in value "${RAPIDPRO_API_USERNAME}"
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:180) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:126) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:239) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:210) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.AbstractPropertyResolver.resolveNestedPlaceholders(AbstractPropertyResolver.java:230) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertyResolver.getProperty(ConfigurationPropertySourcesPropertyResolver.java:79) ~[spring-boot-2.7.4.jar:2.7.4]
+	at org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertyResolver.getProperty(ConfigurationPropertySourcesPropertyResolver.java:60) ~[spring-boot-2.7.4.jar:2.7.4]
+	at org.springframework.core.env.AbstractEnvironment.getProperty(AbstractEnvironment.java:594) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer$1.getProperty(PropertySourcesPlaceholderConfigurer.java:153) ~[spring-context-5.3.23.jar:5.3.23]
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer$1.getProperty(PropertySourcesPlaceholderConfigurer.java:149) ~[spring-context-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.PropertySourcesPropertyResolver.getProperty(PropertySourcesPropertyResolver.java:85) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.PropertySourcesPropertyResolver.getPropertyAsRawString(PropertySourcesPropertyResolver.java:74) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:159) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:126) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:239) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:210) ~[spring-core-5.3.23.jar:5.3.23]
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer.lambda$processProperties$0(PropertySourcesPlaceholderConfigurer.java:191) ~[spring-context-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.resolveEmbeddedValue(AbstractBeanFactory.java:936) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1332) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:656) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:639) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:119) ~[spring-beans-5.3.23.jar:5.3.23]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399) ~[spring-beans-5.3.23.jar:5.3.23]
+	... 15 common frames omitted
+
+2023-03-13 10:55:16.566  INFO 3976 --- [main] o.h.d.integration.rapidpro.Application   : Starting Application using Java 19.0.1 on DESKTOP-BIR2HG9 with PID 3976 (C:\Users\JohanGangsåsHole\Documents\integration-dhis2-whatsapp\target\classes started by JohanGangsåsHole in C:\Users\JohanGangsåsHole\Documents\integration-dhis2-whatsapp)
+2023-03-13 10:55:16.569 DEBUG 3976 --- [main] o.h.d.integration.rapidpro.Application   : Running with Spring Boot v2.7.4, Spring v5.3.23
+2023-03-13 10:55:16.570  INFO 3976 --- [main] o.h.d.integration.rapidpro.Application   : No active profile set, falling back to 1 default profile: "default"
+2023-03-13 10:55:18.121  INFO 3976 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8443 (https)
+2023-03-13 10:55:18.133  INFO 3976 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-03-13 10:55:18.134  INFO 3976 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-03-13 10:55:18.289  INFO 3976 --- [main] o.a.c.c.C.[.[.[/dhis2rapidpro]           : Initializing Spring embedded WebApplicationContext
+2023-03-13 10:55:18.290  INFO 3976 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1674 ms
+2023-03-13 10:55:18.413 ERROR 3976 --- [main] javax.management.mbeanserver             : The LogManager accessed before the "java.util.logging.manager" system property was set to "org.jboss.logmanager.LogManager". Results may be unexpected.
+2023-03-13 10:55:18.761  INFO 3976 --- [main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/management/h2-console'. Database available at 'jdbc:h2:./dhis2rapidpro'
+2023-03-13 10:55:18.939  INFO 3976 --- [main] o.s.b.a.e.web.ServletEndpointRegistrar   : Registered '/management/jolokia' to jolokia-actuator-endpoint
+2023-03-13 10:55:18.954  INFO 3976 --- [main] io.hawt.HawtioContextListener            : Initialising hawtio services
+2023-03-13 10:55:18.959  INFO 3976 --- [main] io.hawt.system.ConfigManager             : Configuration will be discovered via system properties
+2023-03-13 10:55:18.962  INFO 3976 --- [main] io.hawt.jmx.JmxTreeWatcher               : Welcome to Hawtio 2.16.2
+2023-03-13 10:55:18.970  INFO 3976 --- [main] i.h.w.auth.AuthenticationConfiguration   : Starting hawtio authentication filter, JAAS authentication disabled
+2023-03-13 10:55:18.972  INFO 3976 --- [main] io.hawt.web.auth.LoginRedirectFilter     : Hawtio loginRedirectFilter is using 1800 sec. HttpSession timeout
+2023-03-13 10:55:20.530  INFO 3976 --- [main] o.h.d.integration.rapidpro.Application   : Successfully tested connection to RapidPro
+2023-03-13 10:55:20.536  INFO 3976 --- [main] o.h.d.i.r.security.KeyStoreGenerator     : Re-using existing key store at file:/C:/Users/JohanGangsåsHole/Documents/integration-dhis2-whatsapp/tls.jks
+2023-03-13 10:55:20.693  INFO 3976 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Or [Ant [pattern='/management/**'], Ant [pattern='/services/tasks/**'], Ant [pattern='/login'], Ant [pattern='/logout']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@2aeb7c4c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@67f266bd, org.springframework.security.web.context.SecurityContextPersistenceFilter@6ba355e4, org.springframework.security.web.header.HeaderWriterFilter@8167f57, org.springframework.security.web.csrf.CsrfFilter@2173e4d5, org.springframework.security.web.authentication.logout.LogoutFilter@24f5e9e8, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@333a2df2, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@767d9b9, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@31c0c7e5, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@36cf6377, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6b15e68c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@79a68657, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@912747d, org.springframework.security.web.session.SessionManagementFilter@541897c6, org.springframework.security.web.access.ExceptionTranslationFilter@13c81bc5, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@22172b00]
+2023-03-13 10:55:20.700  INFO 3976 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure Ant [pattern='/services/webhook'] with [org.springframework.security.web.session.DisableEncodeUrlFilter@60b4d934, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6a3e633a, org.springframework.security.web.context.SecurityContextPersistenceFilter@70aa03c0, org.springframework.security.web.header.HeaderWriterFilter@6ee1ddcf, org.springframework.security.web.authentication.logout.LogoutFilter@77db231c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@44da745f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2435c6ae, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@41abee65, org.springframework.security.web.session.SessionManagementFilter@6b630d4b, org.springframework.security.web.access.ExceptionTranslationFilter@5ced0537]
+2023-03-13 10:55:21.193  INFO 3976 --- [main] o.h.d.integration.rapidpro.Application   : Successfully tested connection to DHIS 2.38.1
+2023-03-13 10:55:21.385  INFO 3976 --- [main] io.hawt.log.logback.LogbackLogQuery      : Connected to Logback appender to trap logs with Hawtio log plugin
+2023-03-13 10:55:21.784  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221000: live Message Broker is starting with configuration Broker Configuration (clustered=false,jdbcDriverClassName=null,jdbcConnectionUrl=null,messageTableName=messages,bindingsTableName=bindings,largeMessageTableName=large_messages,pageStoreTableName=page_store,)
+2023-03-13 10:55:21.792  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221045: libaio is not available, switching the configuration into NIO
+2023-03-13 10:55:21.855  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221057: Global Max Size is being adjusted to 1/2 of the JVM max size (-Xmx). being defined as 4 250 927 104
+2023-03-13 10:55:21.873  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221043: Protocol module found: [artemis-server]. Adding protocol support for: CORE
+2023-03-13 10:55:21.956  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221034: Waiting indefinitely to obtain live lock
+2023-03-13 10:55:21.957  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221035: Live Server Obtained live lock
+2023-03-13 10:55:22.022  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221080: Deploying address DLQ supporting [ANYCAST]
+2023-03-13 10:55:22.023  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221003: Deploying ANYCAST queue DLQ on address DLQ
+2023-03-13 10:55:22.027  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221080: Deploying address ExpiryQueue supporting [ANYCAST]
+2023-03-13 10:55:22.028  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221003: Deploying ANYCAST queue ExpiryQueue on address ExpiryQueue
+2023-03-13 10:55:22.049  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221007: Server is now live
+2023-03-13 10:55:22.050  INFO 3976 --- [main] org.apache.activemq.artemis.core.server  : AMQ221001: Apache ActiveMQ Artemis Message Broker version 2.19.1 [localhost, nodeID=f561d4b4-8b4f-11ed-b036-4c034f8a3e96] 
+2023-03-13 10:55:22.288  INFO 3976 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 18 endpoint(s) beneath base path '/management'
+2023-03-13 10:55:22.410  INFO 3976 --- [main] o.a.c.c.s.CamelHttpTransportServlet      : Initialized CamelHttpTransportServlet[name=CamelServlet, contextPath=/dhis2rapidpro]
+2023-03-13 10:55:22.411  INFO 3976 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8443 (https) with context path '/dhis2rapidpro'
+2023-03-13 10:55:23.592  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   : Apache Camel 3.20.2 (camel-1) is starting
+2023-03-13 10:55:23.670  INFO 3976 --- [main] o.a.c.component.quartz.QuartzComponent   : Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX
+2023-03-13 10:55:23.691  INFO 3976 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2023-03-13 10:55:23.693  INFO 3976 --- [main] org.quartz.simpl.SimpleThreadPool        : Job execution threads will use class loader of thread: main
+2023-03-13 10:55:23.701  INFO 3976 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2023-03-13 10:55:23.702  INFO 3976 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.3.2 created.
+2023-03-13 10:55:23.703  INFO 3976 --- [main] org.quartz.simpl.RAMJobStore             : RAMJobStore initialized.
+2023-03-13 10:55:23.707  INFO 3976 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.3.2) 'DefaultQuartzScheduler-camel-1' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2023-03-13 10:55:23.708  INFO 3976 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'DefaultQuartzScheduler-camel-1' initialized from an externally provided properties instance.
+2023-03-13 10:55:23.708  INFO 3976 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.3.2
+2023-03-13 10:55:23.801  INFO 3976 --- [main] o.a.c.component.quartz.QuartzEndpoint    : Job Camel_camel-1.pull (cron=0 0/30 * * * ?, triggerType=CronTriggerImpl, jobClass=StatefulCamelJob) is scheduled. Next fire date is 2023-03-13T11:00:00.000+0100
+2023-03-13 10:55:23.828  INFO 3976 --- [main] o.a.c.component.quartz.QuartzEndpoint    : Job Camel_camel-1.reminders (cron=0 0 9 ? * *, triggerType=CronTriggerImpl, jobClass=CamelJob) is scheduled. Next fire date is 2023-03-14T09:00:00.000+0100
+2023-03-13 10:55:23.914  INFO 3976 --- [main] o.a.c.component.quartz.QuartzEndpoint    : Job Camel_camel-1.sync (cron=0 0/30 * * * ?, triggerType=CronTriggerImpl, jobClass=StatefulCamelJob) is scheduled. Next fire date is 2023-03-13T11:00:00.000+0100
+2023-03-13 10:55:23.970  INFO 3976 --- [main] c.s.b.CamelSpringBootApplicationListener : Starting CamelMainRunController to ensure the main thread keeps running
+2023-03-13 10:55:23.971  INFO 3976 --- [CamelMainRunController] org.apache.camel.main.MainSupport        : Apache Camel (Main) 3.20.2 is starting
+2023-03-13 10:55:23.972  INFO 3976 --- [main] .a.c.s.FileWatcherResourceReloadStrategy : Live route reloading enabled (directory: routes)
+2023-03-13 10:55:24.076  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   : Routes startup (started:29)
+2023-03-13 10:55:24.076  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Set up RapidPro (direct://prepareRapidPro)
+2023-03-13 10:55:24.076  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Create RapidPro Fields (direct://createFieldsRoute)
+2023-03-13 10:55:24.077  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Create RapidPro Group (direct://createGroupRoute)
+2023-03-13 10:55:24.077  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route1 (servlet:/tasks/scan)
+2023-03-13 10:55:24.077  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route2 (quartz://pull)
+2023-03-13 10:55:24.078  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Scan RapidPro Flows (direct://pull)
+2023-03-13 10:55:24.078  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route3 (servlet:/tasks/reminders)
+2023-03-13 10:55:24.078  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route4 (quartz://reminders)
+2023-03-13 10:55:24.078  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Broadcast Reminders (direct://reminders)
+2023-03-13 10:55:24.078  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route5 (direct://fetchDataSet)
+2023-03-13 10:55:24.079  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route6 (direct://fetchContacts)
+2023-03-13 10:55:24.079  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route7 (direct://fetchReportRate)
+2023-03-13 10:55:24.079  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route8 (direct://sendBroadcast)
+2023-03-13 10:55:24.079  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Retry Reports (timer://retry)
+2023-03-13 10:55:24.080  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Consume Report (jms://queue:dhis2)
+2023-03-13 10:55:24.080  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Deliver Report (direct://deliverReport)
+2023-03-13 10:55:24.080  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Transform Report (direct://transformReport)
+2023-03-13 10:55:24.080  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Transmit Report (direct://transmitReport)
+2023-03-13 10:55:24.080  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Save Failed Report (direct://dlq)
+2023-03-13 10:55:24.080  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Compute Period (direct://computePeriod)
+2023-03-13 10:55:24.081  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route9 (direct://completeDataSetRegistration)
+2023-03-13 10:55:24.081  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route10 (servlet:/tasks/sync)
+2023-03-13 10:55:24.081  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route11 (quartz://sync)
+2023-03-13 10:55:24.081  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Sync RapidPro Contacts (direct://sync)
+2023-03-13 10:55:24.081  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route12 (direct://createContact)
+2023-03-13 10:55:24.082  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started route13 (direct://updateContact)
+2023-03-13 10:55:24.082  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Set up Program Fields RapidPro (direct://prepareTrackerRapidPro)
+2023-03-13 10:55:24.082  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Create Program RapidPro Fields (direct://createProgramFieldsRoute)
+2023-03-13 10:55:24.083  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   :     Started Create Program RapidPro Group (direct://createProgramGroupRoute)
+2023-03-13 10:55:24.083  INFO 3976 --- [main] o.a.c.impl.engine.AbstractCamelContext   : Apache Camel 3.20.2 (camel-1) started in 1s661ms (build:70ms init:1s102ms start:489ms)
+2023-03-13 10:55:24.085  INFO 3976 --- [main] o.a.c.component.quartz.QuartzComponent   : Starting Quartz scheduler: org.quartz.impl.StdScheduler@47e6004c
+2023-03-13 10:55:24.085  INFO 3976 --- [main] org.quartz.core.QuartzScheduler          : Scheduler DefaultQuartzScheduler-camel-1_$_NON_CLUSTERED started.
+2023-03-13 10:55:24.089  INFO 3976 --- [main] o.h.d.integration.rapidpro.Application   : Started Application in 7.837 seconds (JVM running for 8.237)
+2023-03-13 10:55:24.095  INFO 3976 --- [main] o.h.d.integration.rapidpro.Application   : 
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ ONLINE
+
+ Hawtio console: https://192.168.1.122:8443/dhis2rapidpro/management/hawtio
+ H2 console: https://192.168.1.122:8443/dhis2rapidpro/management/h2-console
+ Poll flows task: https://192.168.1.122:8443/dhis2rapidpro/services/tasks/scan
+ Sync contacts task: https://192.168.1.122:8443/dhis2rapidpro/services/tasks/sync
+ Remind contacts task: https://192.168.1.122:8443/dhis2rapidpro/services/tasks/reminders
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+2023-03-13 10:55:25.989  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   : Apache Camel 3.20.2 (camel-1) is shutting down (timeout:45s)
+2023-03-13 10:55:25.992  INFO 3976 --- [Camel (camel-1) thread #4 - ShutdownTask] o.a.c.component.quartz.QuartzEndpoint    : Pausing trigger Camel_camel-1.sync
+2023-03-13 10:55:25.993  INFO 3976 --- [Camel (camel-1) thread #4 - ShutdownTask] o.a.c.component.quartz.QuartzEndpoint    : Pausing trigger Camel_camel-1.reminders
+2023-03-13 10:55:25.994  INFO 3976 --- [Camel (camel-1) thread #4 - ShutdownTask] o.a.c.component.quartz.QuartzEndpoint    : Pausing trigger Camel_camel-1.pull
+2023-03-13 10:55:26.127  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.component.quartz.QuartzEndpoint    : Deleting job Camel_camel-1.sync
+2023-03-13 10:55:26.132  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.component.quartz.QuartzEndpoint    : Deleting job Camel_camel-1.reminders
+2023-03-13 10:55:26.133  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.component.quartz.QuartzEndpoint    : Deleting job Camel_camel-1.pull
+2023-03-13 10:55:26.135  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   : Routes stopped (stopped:29)
+2023-03-13 10:55:26.136  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Create Program RapidPro Group (direct://createProgramGroupRoute)
+2023-03-13 10:55:26.136  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Create Program RapidPro Fields (direct://createProgramFieldsRoute)
+2023-03-13 10:55:26.136  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Set up Program Fields RapidPro (direct://prepareTrackerRapidPro)
+2023-03-13 10:55:26.137  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route13 (direct://updateContact)
+2023-03-13 10:55:26.137  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route12 (direct://createContact)
+2023-03-13 10:55:26.137  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Sync RapidPro Contacts (direct://sync)
+2023-03-13 10:55:26.137  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route11 (quartz://sync)
+2023-03-13 10:55:26.138  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route10 (servlet:/tasks/sync)
+2023-03-13 10:55:26.138  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route9 (direct://completeDataSetRegistration)
+2023-03-13 10:55:26.138  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Compute Period (direct://computePeriod)
+2023-03-13 10:55:26.139  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Save Failed Report (direct://dlq)
+2023-03-13 10:55:26.139  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Transmit Report (direct://transmitReport)
+2023-03-13 10:55:26.139  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Transform Report (direct://transformReport)
+2023-03-13 10:55:26.139  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Deliver Report (direct://deliverReport)
+2023-03-13 10:55:26.139  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Consume Report (jms://queue:dhis2)
+2023-03-13 10:55:26.139  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Retry Reports (timer://retry)
+2023-03-13 10:55:26.140  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route8 (direct://sendBroadcast)
+2023-03-13 10:55:26.140  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route7 (direct://fetchReportRate)
+2023-03-13 10:55:26.140  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route6 (direct://fetchContacts)
+2023-03-13 10:55:26.140  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route5 (direct://fetchDataSet)
+2023-03-13 10:55:26.141  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Broadcast Reminders (direct://reminders)
+2023-03-13 10:55:26.141  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route4 (quartz://reminders)
+2023-03-13 10:55:26.141  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route3 (servlet:/tasks/reminders)
+2023-03-13 10:55:26.141  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Scan RapidPro Flows (direct://pull)
+2023-03-13 10:55:26.141  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route2 (quartz://pull)
+2023-03-13 10:55:26.142  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped route1 (servlet:/tasks/scan)
+2023-03-13 10:55:26.142  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Create RapidPro Group (direct://createGroupRoute)
+2023-03-13 10:55:26.142  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Create RapidPro Fields (direct://createFieldsRoute)
+2023-03-13 10:55:26.142  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   :     Stopped Set up RapidPro (direct://prepareRapidPro)
+2023-03-13 10:55:26.144  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.component.quartz.QuartzComponent   : Shutting down Quartz scheduler (will wait for all jobs to complete first)
+2023-03-13 10:55:26.144  INFO 3976 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler DefaultQuartzScheduler-camel-1_$_NON_CLUSTERED shutting down.
+2023-03-13 10:55:26.145  INFO 3976 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler DefaultQuartzScheduler-camel-1_$_NON_CLUSTERED paused.
+2023-03-13 10:55:26.211  INFO 3976 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler unregistered from name 'quartz:type=QuartzScheduler,name=DefaultQuartzScheduler-camel-1,instance=NON_CLUSTERED' in the local MBeanServer.
+2023-03-13 10:55:26.212  INFO 3976 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler DefaultQuartzScheduler-camel-1_$_NON_CLUSTERED shutdown complete.
+2023-03-13 10:55:26.216  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.impl.engine.AbstractCamelContext   : Apache Camel 3.20.2 (camel-1) shutdown in 227ms (uptime:2s)
+2023-03-13 10:55:26.227  INFO 3976 --- [SpringApplicationShutdownHook] o.a.c.c.s.CamelHttpTransportServlet      : Destroyed CamelHttpTransportServlet[CamelServlet]
+2023-03-13 10:55:26.228  INFO 3976 --- [SpringApplicationShutdownHook] io.hawt.web.auth.AuthenticationFilter    : Destroying hawtio authentication filter
+2023-03-13 10:55:26.228  INFO 3976 --- [SpringApplicationShutdownHook] io.hawt.HawtioContextListener            : Destroying hawtio services
+2023-03-13 10:55:26.300  INFO 3976 --- [SpringApplicationShutdownHook] org.apache.activemq.artemis.core.server  : AMQ221002: Apache ActiveMQ Artemis Message Broker version 2.19.1 [f561d4b4-8b4f-11ed-b036-4c034f8a3e96] stopped, uptime 4.529 seconds
