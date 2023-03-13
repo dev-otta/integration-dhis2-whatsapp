@@ -60,6 +60,7 @@ public class SyncRouteBuilder extends AbstractRouteBuilder
             .precondition( "{{sync.rapidpro.contacts}}" )
             .removeHeaders( "*" )
             .to( "direct:sync" )
+            .to("direct:enrollmentSync")
             .setHeader( Exchange.CONTENT_TYPE, constant( "application/json" ) )
             .setBody( constant( Map.of("status", "success", "data", "Synchronised RapidPro contacts with DHIS2 users") ) )
             .marshal().json();

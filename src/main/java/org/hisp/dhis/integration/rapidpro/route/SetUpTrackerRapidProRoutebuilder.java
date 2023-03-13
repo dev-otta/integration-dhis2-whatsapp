@@ -39,7 +39,7 @@ import java.util.Map;
 public class SetUpTrackerRapidProRoutebuilder extends AbstractRouteBuilder
 {
     @Value("${dhis2.program.name}")
-    private String programName;
+    protected String programName;
     @Override
     protected void doConfigure()
     {
@@ -85,6 +85,7 @@ public class SetUpTrackerRapidProRoutebuilder extends AbstractRouteBuilder
             .setProperty( "groupCount", jsonpath( "$.results.length()" ) )
             .choice().when()
                 .simple( "${exchangeProperty.groupCount} == 0" ).log( LoggingLevel.INFO, LOGGER, "Creating {{dhis2.program.name}} group in RapidPro..." )
+                // FIXME: remove programName variable and replace it with ${} notation
                 .setBody( constant( Map.of( "name", programName) ) ).marshal()
                 .json().toD( "{{rapidpro.api.url}}/groups.json?httpMethod=POST" ).setProperty( "groupUuid", jsonpath( "$.uuid" ) )
             .otherwise()

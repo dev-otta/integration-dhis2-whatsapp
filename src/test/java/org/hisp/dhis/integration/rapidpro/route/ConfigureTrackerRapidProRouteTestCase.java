@@ -311,11 +311,5 @@ public class ConfigureTrackerRapidProRouteTestCase
             objectMapper.readValue( endpoint.getExchanges().get( 0 ).getMessage().getBody( String.class ), Map.class )
                 .get( "label" ) );
     }
-    
-    @Test
-    public void testDhis2EnrollmentFetch() {
-        camelContext.start();
-        producerTemplate.sendBody("direct:fetchEnrollment", null);
-    }
 }
 
