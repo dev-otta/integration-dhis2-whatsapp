@@ -94,7 +94,7 @@ public class EnrollmentSyncRouteBuilderFunctionalTestCase
     @Test
     public void testApiRequestsDHIS2() throws Exception
     {
-        //Dhis2Client dhis2Client = Dhis2ClientBuilder.newClient("{{dhis2.api.url}}", "{{dhis2.api.username}}", "{{dhis2.api.password}}").build();
+        Dhis2Client dhis2Client = Dhis2ClientBuilder.newClient("{{dhis2.api.url}}", "{{dhis2.api.username}}", "{{dhis2.api.password}}").build();
         AdviceWith.adviceWith(camelContext, "Enrollment Sync", r ->
         r.weaveAddLast().to("mock:complete")
         );
