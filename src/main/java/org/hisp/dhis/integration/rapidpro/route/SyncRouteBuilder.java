@@ -76,6 +76,7 @@ public class SyncRouteBuilder extends AbstractRouteBuilder
             .setProperty( "orgUnitIdScheme", simple( "{{org.unit.id.scheme}}" ) )
             .toD( "dhis2://get/collection?path=users&fields=id,firstName,surname,phoneNumber,telegram,whatsApp,twitter,facebookMessenger,organisationUnits[${exchangeProperty.orgUnitIdScheme.toLowerCase()}~rename(id)]&filter=organisationUnits.id:!null&itemType=org.hisp.dhis.api.model.v2_38_1.User&paging=false&client=#dhis2Client" )
             .setProperty( "dhis2Users", iterableReader )
+            .log(LoggingLevel.INFO, LOGGER, "DHIS2Users property: ${exchangeProperty.dhis2Users}")
             .setHeader( "Authorization", constant( "Token {{rapidpro.api.token}}" ) )
             .setProperty( "nextContactsPageUrl", simple( "{{rapidpro.api.url}}/contacts.json?group=DHIS2" ) )
             .loopDoWhile( exchangeProperty( "nextContactsPageUrl" ).isNotNull() )
@@ -94,9 +95,11 @@ public class SyncRouteBuilder extends AbstractRouteBuilder
             .log( LoggingLevel.INFO, LOGGER, "Completed synchronisation of RapidPro contacts with DHIS2 users" );
 
         from( "direct:createContact" )
+            .log("Body of Contact creation before transform ${body} ")
             .transform( datasonnet( "resource:classpath:contact.ds", Map.class, "application/x-java-object", "application/x-java-object" ) )
             .setProperty( "dhis2UserId", simple( "${body['fields']['dhis2_user_id']}" ) )
             .marshal().json().convertBodyTo( String.class )
+            .log("Body of Contact creation after transform ${body} ")
             .setHeader( "Authorization", constant( "Token {{rapidpro.api.token}}" ) )
             .log( LoggingLevel.DEBUG, LOGGER, "Creating RapidPro contact for DHIS2 user ${exchangeProperty.dhis2UserId}" )
             .toD( "{{rapidpro.api.url}}/contacts.json?httpMethod=POST&okStatusCodeRange=200-499" )
@@ -109,6 +112,7 @@ public class SyncRouteBuilder extends AbstractRouteBuilder
             .setBody( simple( "${body.getValue}" ) )
             .transform( datasonnet( "resource:classpath:contact.ds", Map.class, "application/x-java-object", "application/x-java-object" ) )
             .marshal().json().convertBodyTo( String.class )
+            .log("Body of Contact update ${body} ")
             .setHeader( "Authorization", constant( "Token {{rapidpro.api.token}}" ) )
             .log( LoggingLevel.DEBUG, LOGGER, "Updating RapidPro contact ${exchangeProperty.rapidProUuid}" )
             .toD( "{{rapidpro.api.url}}/contacts.json?uuid=${exchangeProperty.rapidProUuid}&httpMethod=POST&okStatusCodeRange=200-499" )
