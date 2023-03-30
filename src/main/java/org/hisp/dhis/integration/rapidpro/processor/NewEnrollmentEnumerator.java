@@ -28,13 +28,17 @@
 package org.hisp.dhis.integration.rapidpro.processor;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.hisp.dhis.api.model.v2_38_1.Attribute__1;
 import org.hisp.dhis.api.model.v2_38_1.Attribute__2;
+import org.hisp.dhis.api.model.v2_38_1.Attributes__1;
 import org.hisp.dhis.api.model.v2_38_1.TrackedEntity;
 import org.hisp.dhis.api.model.v2_38_1.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +50,7 @@ import com.datasonnet.document.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class ExistingEnrollmentEnumerator implements Processor
+public class NewEnrollmentEnumerator implements Processor
 {
     @Autowired
     private ObjectMapper objectMapper;
@@ -55,23 +59,38 @@ public class ExistingEnrollmentEnumerator implements Processor
     public void process( Exchange exchange )
         throws Exception
     {
-        Map<String, Document<Map<String, Object>>> updatedDhis2Enrollments = new HashMap<>();
+        Set<Document<Map<String, Object>>> newDhis2Enrollments = new HashSet<>();
         List<TrackedEntity> dhis2Enrollments = exchange.getProperty( "dhis2Enrollments", List.class );
         Map<String, Object> rapidProContacts = exchange.getProperty( "rapidProContacts", Map.class );
         List<Map<String, Object>> results = (List<Map<String, Object>>) rapidProContacts.get( "results" );
 
         for ( TrackedEntity dhis2Enrollment : dhis2Enrollments )
         {
-            Optional<Map<String, Object>> rapidProContact = results.stream().filter(
-                c -> ((Map<String, Object>) c.get( "fields" )).get( "dhis2_enrollment_id" )
-                    .equals( dhis2Enrollment.getEnrollments().get().get(0).getEnrollment().get() ) )
-                .findFirst();
+            // Extract all of the necessary fields 
+            List<Attribute__2> attributes = dhis2Enrollment.getAttributes().get();
+            Optional<String> enrollment_id = dhis2Enrollment.getEnrollments().get().get(0).getEnrollment();
+            if ( isNotBlank(enrollment_id) || isNotBlank( dhis2Enrollment.getTrackedEntity() ) ||
+                dhis2Enrollment.getCreatedAt().isPresent() || !(attributes.isEmpty()))
+            {
+                Optional<Map<String, Object>> rapidProContact = results.stream().filter(
+                        c -> ((Map<String, Object>) c.get( "fields" )).get( "dhis2_enrollment_id" )
+                            .equals( enrollment_id.get() ) )
+                    .findFirst();
 
-            rapidProContact.ifPresent( c -> updatedDhis2Enrollments.put( (String) c.get( "uuid" ),
-                new DefaultDocument<>( objectMapper.convertValue( extractData(dhis2Enrollment), Map.class ),
-                    new MediaType( "application", "x-java-object" ) ) ) );
+                if ( rapidProContact.isEmpty() )
+                {
+                    Map<String, Object> newEnrollmentContact = extractData(dhis2Enrollment);
+                    newDhis2Enrollments.add( new DefaultDocument<>( objectMapper.convertValue( newEnrollmentContact, Map.class ),
+                        new MediaType( "application", "x-java-object" ) ) );
+                }
+            }
         }
-        exchange.getMessage().setBody( updatedDhis2Enrollments );
+
+        exchange.getMessage().setBody( newDhis2Enrollments );
+    }
+    private boolean isNotBlank( Optional<String> stringOptional )
+    {
+        return stringOptional.isPresent() && !stringOptional.get().isBlank();
     }
     private Map<String, Object> extractData(TrackedEntity tei) {
         Map<String, Object> newEnrollmentContact = new HashMap<String,Object>();

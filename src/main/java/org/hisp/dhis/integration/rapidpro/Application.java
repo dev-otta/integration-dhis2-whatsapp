@@ -235,7 +235,6 @@ public class Application extends SpringBootServletInitializer
             onlineBanner.append(" Sync DHIS2 enrollments task: ").append( baseUrl ).append("/services/tasks/enrollmentSync\n");
         }
         onlineBanner.append( " Remind contacts task: " ).append( baseUrl ).append( "/services/tasks/reminders\n" );
-
         LOGGER.info(
             String.format( StreamUtils.copyToString(
                     Thread.currentThread().getContextClassLoader().getResourceAsStream( "online-banner.txt" ),

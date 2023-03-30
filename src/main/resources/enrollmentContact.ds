@@ -1,0 +1,10 @@
+{
+    urns: 
+          (if std.objectHas(body, "whatsApp") && !ds.isBlank(body.whatsApp) then ['whatsapp:%s' % body.whatsApp] else []),
+    groups: [cml.exchangeProperty('groupUuid')],
+    fields: {
+        dhis2_organisation_unit_id: body.orgUnit,
+        dhis2_enrollment_id: body.enrollmentId,
+        dhis2_enrolled_at: body.createdAt
+    }
+}
