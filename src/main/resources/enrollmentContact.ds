@@ -5,6 +5,7 @@
     fields: {
         dhis2_organisation_unit_id: body.orgUnit,
         dhis2_enrollment_id: body.enrollmentId,
-        dhis2_enrolled_at: body.createdAt
+        dhis2_enrolled_at: body.createdAt,
+        dhis2_tracked_entity_instance_id: body.trackedEntityInstance
     }
 }

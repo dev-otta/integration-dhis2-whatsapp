@@ -63,7 +63,7 @@ public class EnrollmentSyncRouteBuilder extends AbstractRouteBuilder {
                 .split().body()
                     .to( "direct:createEnrollmentContact" )
                 .end()
-                 .process( existingEnrollmentEnumerator )
+                .process( existingEnrollmentEnumerator )
                 .split().body()
                     .to( "direct:updateEnrollmentContact" )
                 .end()
@@ -78,7 +78,7 @@ public class EnrollmentSyncRouteBuilder extends AbstractRouteBuilder {
             .log( LoggingLevel.DEBUG, LOGGER, "Creating RapidPro contact for {{dhis2.program.name}} enrollment ${exchangeProperty.dhis2EnrollmentId}" )
             .toD( "{{rapidpro.api.url}}/contacts.json?httpMethod=POST&okStatusCodeRange=200-499" )
             .choice().when( header( Exchange.HTTP_RESPONSE_CODE ).isNotEqualTo( "201" ) )
-                .log( LoggingLevel.WARN, LOGGER, "Unexpected status code when creating RapidPro contact for DHIS2 user ${exchangeProperty.dhis2UserId} => HTTP ${header.CamelHttpResponseCode}. HTTP response body => ${body}" )
+                .log( LoggingLevel.WARN, LOGGER, "Unexpected status code when creating RapidPro contact for DHIS2 enrollment ${exchangeProperty.dhis2EnrollmentId} => HTTP ${header.CamelHttpResponseCode}. HTTP response body => ${body}" )
             .end();
 
         from( "direct:updateEnrollmentContact" )

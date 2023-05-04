@@ -99,7 +99,7 @@ public class ConfigureTrackerRapidProRouteTestCase
 
 
     @Test
-    public void testDhis2OrgUnitIdAndDhis2EnrollmentIdAndDhis2EnrolledAtFieldsAreCreatedWhenTheyDoNotExistOnRapidPro()
+    public void testDhis2OrgUnitIdAndDhis2EnrollmentIdAndDhis2EnrolledAtandDhis2TeiIdFieldsAreCreatedWhenTheyDoNotExistOnRapidPro()
         throws
         Exception
     {
@@ -139,12 +139,24 @@ public class ConfigureTrackerRapidProRouteTestCase
                             return (T) "{\"results\":[]}";
                         }
                     } ) );
+        AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+        r -> r.interceptSendToEndpoint(
+                "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_tracked_entity_instance_id" )
+            .skipSendToOriginalEndpoint().setBody(
+                new Expression()
+                {
+                    @Override
+                    public <T> T evaluate( Exchange exchange, Class<T> type )
+                    {
+                        return (T) "{\"results\":[]}";
+                    }
+                } ) );
         MockEndpoint endpoint = camelContext.getEndpoint( "mock:rapidpro/fields.json?httpMethod=POST",
             MockEndpoint.class );
 
         camelContext.start();
         producerTemplate.sendBody( "direct:createProgramFieldsRoute", null );
-        assertEquals( 3, endpoint.getReceivedCounter() );
+        assertEquals( 4, endpoint.getReceivedCounter() );
         assertEquals( "DHIS2 Organisation Unit ID",
             objectMapper.readValue( endpoint.getExchanges().get( 0 ).getMessage().getBody( String.class ), Map.class )
                 .get( "label" ) );
@@ -153,6 +165,9 @@ public class ConfigureTrackerRapidProRouteTestCase
                 .get( "label" ) );
         assertEquals("DHIS2 Enrolled At",
             objectMapper.readValue(endpoint.getExchanges().get(2).getMessage().getBody(String.class), Map.class)
+                .get("label"));
+        assertEquals("DHIS2 Tracked Entity Instance ID",
+            objectMapper.readValue(endpoint.getExchanges().get(3).getMessage().getBody(String.class), Map.class)
                 .get("label"));
     }
 
@@ -188,6 +203,18 @@ public class ConfigureTrackerRapidProRouteTestCase
 
         AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
         r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrolled_at" )
+            .skipSendToOriginalEndpoint().setBody(
+                new Expression()
+                    {
+                        @Override
+                        public <T> T evaluate( Exchange exchange, Class<T> type )
+                        {
+                            return (T) "{\"results\":[{}]}";
+                        }
+                    } ) );
+        AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+        r -> r.interceptSendToEndpoint(
+                "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_tracked_entity_instance_id" )
             .skipSendToOriginalEndpoint().setBody(
                 new Expression()
                     {
@@ -249,6 +276,18 @@ public class ConfigureTrackerRapidProRouteTestCase
                             return (T) "{\"results\":[{}]}";
                         }
                     } ) );
+        AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+        r -> r.interceptSendToEndpoint(
+                "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_tracked_entity_instance_id" )
+            .skipSendToOriginalEndpoint().setBody(
+                new Expression()
+                    {
+                        @Override
+                        public <T> T evaluate( Exchange exchange, Class<T> type )
+                        {
+                            return (T) "{\"results\":[{}]}";
+                        }
+                    } ) );
         MockEndpoint endpoint = camelContext.getEndpoint( "mock:rapidpro/fields.json?httpMethod=POST",
             MockEndpoint.class );
 
@@ -264,52 +303,129 @@ public class ConfigureTrackerRapidProRouteTestCase
     public void testDhis2EnrolledAtFieldIsCreatedWhenItDoesNotExistOnRapidPro()
         throws
         Exception
-    {
-        AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+        {
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+                r -> r.interceptSendToEndpoint(
+                        "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_organisation_unit_id" )
+                    .skipSendToOriginalEndpoint().setBody(
+                        new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[{}]}";
+                            }
+                        } ) );
+    
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+                r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrollment_id" )
+                    .skipSendToOriginalEndpoint().setBody(
+                        new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[{}]}";
+                            }
+                        } ) );
+    
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+            r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrolled_at" )
+                .skipSendToOriginalEndpoint().setBody(
+                    new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[]}";
+                            }
+                        } ) );
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
             r -> r.interceptSendToEndpoint(
-                    "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_organisation_unit_id" )
+                    "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_tracked_entity_instance_id" )
                 .skipSendToOriginalEndpoint().setBody(
                     new Expression()
-                    {
-                        @Override
-                        public <T> T evaluate( Exchange exchange, Class<T> type )
                         {
-                            return (T) "{\"results\":[{}]}";
-                        }
-                    } ) );
-
-        AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
-            r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrollment_id" )
-                .skipSendToOriginalEndpoint().setBody(
-                    new Expression()
-                    {
-                        @Override
-                        public <T> T evaluate( Exchange exchange, Class<T> type )
-                        {
-                            return (T) "{\"results\":[{}]}";
-                        }
-                    } ) );
-
-        AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
-        r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrolled_at" )
-            .skipSendToOriginalEndpoint().setBody(
-                new Expression()
-                    {
-                        @Override
-                        public <T> T evaluate( Exchange exchange, Class<T> type )
-                        {
-                            return (T) "{\"results\":[]}";
-                        }
-                    } ) );
-        MockEndpoint endpoint = camelContext.getEndpoint( "mock:rapidpro/fields.json?httpMethod=POST",
-            MockEndpoint.class );
-
-        camelContext.start();
-        producerTemplate.sendBody( "direct:createProgramFieldsRoute", null );
-        assertEquals( 1, endpoint.getReceivedCounter() );
-        assertEquals( "DHIS2 Enrolled At",
-            objectMapper.readValue( endpoint.getExchanges().get( 0 ).getMessage().getBody( String.class ), Map.class )
-                .get( "label" ) );
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[{}]}";
+                            }
+                        } ) );
+            MockEndpoint endpoint = camelContext.getEndpoint( "mock:rapidpro/fields.json?httpMethod=POST",
+                MockEndpoint.class );
+    
+            camelContext.start();
+            producerTemplate.sendBody( "direct:createProgramFieldsRoute", null );
+            assertEquals( 1, endpoint.getReceivedCounter() );
+            assertEquals( "DHIS2 Enrolled At",
+                objectMapper.readValue( endpoint.getExchanges().get( 0 ).getMessage().getBody( String.class ), Map.class )
+                    .get( "label" ) );
     }
+
+        @Test
+        public void testDhis2TeiIdFieldIsCreatedWhenItDoesNotExistOnRapidPro()
+            throws
+            Exception
+        {
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+                r -> r.interceptSendToEndpoint(
+                        "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_organisation_unit_id" )
+                    .skipSendToOriginalEndpoint().setBody(
+                        new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[{}]}";
+                            }
+                        } ) );
+    
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+                r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrollment_id" )
+                    .skipSendToOriginalEndpoint().setBody(
+                        new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[{}]}";
+                            }
+                        } ) );
+    
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+            r -> r.interceptSendToEndpoint( "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_enrolled_at" )
+                .skipSendToOriginalEndpoint().setBody(
+                    new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[{}]}";
+                            }
+                        } ) );
+            AdviceWith.adviceWith( camelContext, "Create Program RapidPro Fields",
+            r -> r.interceptSendToEndpoint(
+                    "mock://rapidpro/fields.json?httpMethod=GET&key=dhis2_tracked_entity_instance_id" )
+                .skipSendToOriginalEndpoint().setBody(
+                    new Expression()
+                        {
+                            @Override
+                            public <T> T evaluate( Exchange exchange, Class<T> type )
+                            {
+                                return (T) "{\"results\":[]}";
+                            }
+                        } ) );
+            MockEndpoint endpoint = camelContext.getEndpoint( "mock:rapidpro/fields.json?httpMethod=POST",
+                MockEndpoint.class );
+    
+            camelContext.start();
+            producerTemplate.sendBody( "direct:createProgramFieldsRoute", null );
+            assertEquals( 1, endpoint.getReceivedCounter() );
+            assertEquals( "DHIS2 Tracked Entity Instance ID",
+                objectMapper.readValue( endpoint.getExchanges().get( 0 ).getMessage().getBody( String.class ), Map.class )
+                    .get( "label" ) );
+        }
+    
 }
 

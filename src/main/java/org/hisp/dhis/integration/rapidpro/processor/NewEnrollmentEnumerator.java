@@ -69,7 +69,8 @@ public class NewEnrollmentEnumerator implements Processor
             // Extract all of the necessary fields 
             List<Attribute__2> attributes = dhis2Enrollment.getAttributes().get();
             Optional<String> enrollment_id = dhis2Enrollment.getEnrollments().get().get(0).getEnrollment();
-            if ( isNotBlank(enrollment_id) || isNotBlank( dhis2Enrollment.getTrackedEntity() ) ||
+            Optional<String> tei_id = dhis2Enrollment.getTrackedEntity();
+            if ( isNotBlank(enrollment_id) || isNotBlank( dhis2Enrollment.getTrackedEntity() ) || isNotBlank(tei_id) ||
                 dhis2Enrollment.getCreatedAt().isPresent() || !(attributes.isEmpty()))
             {
                 Optional<Map<String, Object>> rapidProContact = results.stream().filter(
@@ -97,6 +98,7 @@ public class NewEnrollmentEnumerator implements Processor
         newEnrollmentContact.put("enrollmentId",tei.getEnrollments().get().get(0).getEnrollment().get());
         newEnrollmentContact.put("orgUnit",tei.getOrgUnit().get());
         newEnrollmentContact.put("createdAt", tei.getCreatedAt().get());
+        newEnrollmentContact.put("trackedEntityInstance", tei.getTrackedEntity().get());
         newEnrollmentContact.put("whatsApp",extractWhatsAppNumber(tei.getAttributes().get()));
         return newEnrollmentContact;
     }

@@ -73,11 +73,13 @@ public class ExistingEnrollmentEnumerator implements Processor
         }
         exchange.getMessage().setBody( updatedDhis2Enrollments );
     }
+    
     private Map<String, Object> extractData(TrackedEntity tei) {
         Map<String, Object> newEnrollmentContact = new HashMap<String,Object>();
         newEnrollmentContact.put("enrollmentId",tei.getEnrollments().get().get(0).getEnrollment().get());
         newEnrollmentContact.put("orgUnit",tei.getOrgUnit().get());
         newEnrollmentContact.put("createdAt", tei.getCreatedAt().get());
+        newEnrollmentContact.put("trackedEntityInstance", tei.getTrackedEntity().get());
         newEnrollmentContact.put("whatsApp",extractWhatsAppNumber(tei.getAttributes().get()));
         return newEnrollmentContact;
     }

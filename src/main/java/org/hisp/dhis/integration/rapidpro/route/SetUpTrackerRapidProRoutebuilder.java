@@ -74,6 +74,16 @@ public class SetUpTrackerRapidProRoutebuilder extends AbstractRouteBuilder
                 .log( LoggingLevel.INFO, LOGGER, "Creating DHIS2 Enrolled At field in RapidPro..." )
                 .setBody( constant( Map.of( "label", "DHIS2 Enrolled At", "value_type", "text" ) ) ).marshal().json()
                 .toD( "{{rapidpro.api.url}}/fields.json?httpMethod=POST" )
+            .end()
+            .toD( "{{rapidpro.api.url}}/fields.json?key=dhis2_tracked_entity_instance_id&httpMethod=GET" )
+            .setProperty( "fieldCount", jsonpath( "$.results.length()" ) )
+            .choice().when().simple( "${exchangeProperty.fieldCount} == 0" )
+                .log( LoggingLevel.INFO, LOGGER, "Creating DHIS2 Tracked Entity Instance ID field in RapidPro..." )
+                .setBody( constant( Map.of( "label", "DHIS2 Tracked Entity Instance ID", "value_type", "text" ) ) ).marshal().json()
+                .log( LoggingLevel.INFO, LOGGER, "Creating DHIS2 Tracked Entity Instance ID, after SetBody..." )
+                .log( LoggingLevel.INFO, LOGGER, "Body: ${body}" )
+                .toD( "{{rapidpro.api.url}}/fields.json?httpMethod=POST" )
+                .log( LoggingLevel.INFO, LOGGER, "Creating DHIS2 Tracked Entity Instance ID, after post request..." )
             .end();
     }
 
