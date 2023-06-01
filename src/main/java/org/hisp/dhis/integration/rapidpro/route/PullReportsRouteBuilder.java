@@ -91,8 +91,9 @@ public class PullReportsRouteBuilder extends AbstractRouteBuilder
                 .setBody( simple( "${properties:last.run.upsert.{{spring.sql.init.platform}}}" ) )
                 .to( "jdbc:dataSource?useHeadersAsParameters=true" )
             .end();
-        from("direct:aggregateFlow")
-            .log( LoggingLevel.DEBUG, LOGGER, "Handling aggregate flow...")
+        from( "direct:aggregateFlow" )
+            .log( LoggingLevel.DEBUG, LOGGER, "Handling aggregate flow..." )
+            .setHeader( "reportType" ).simple( "aggregate" )
             .setHeader( "dataSetCode", simple( "${body[values][data_set_code][value]}" ) )
             .setHeader( "orgUnitId" ).ognl( "request.body['values']['org_unit_id'] == null ? null : request.body['values']['org_unit_id']['value']" )
             .setHeader( "reportPeriodOffset" ).ognl( "request.body['values']['report_period_offset'] == null ? null : request.body['values']['report_period_offset']['value']" )
@@ -100,13 +101,15 @@ public class PullReportsRouteBuilder extends AbstractRouteBuilder
             .to( "jms:queue:dhis2?exchangePattern=InOnly" )
             .log( LoggingLevel.DEBUG, LOGGER, "Enqueued aggregate flow run [data set code = ${header.dataSetCode},report period offset = ${header.reportPeriodOffset},content = ${body}]" )
             .end();
-        from("direct:trackerFlow")
-            .log( LoggingLevel.DEBUG, LOGGER, "Handling tracker flow...")
+        from( "direct:trackerFlow" )
+            .log( LoggingLevel.DEBUG, LOGGER, "Handling tracker flow..." )
+            .setHeader( "reportType" ).simple("event")
             .setHeader( "programId", simple( "${body[values][program_id][value]}" ) )
+            .setHeader( "programStageId",simple( "${body[values][program_stage_id][value]}" ))
             .setHeader( "orgUnitId" ).ognl( "request.body['values']['org_unit_id'] == null ? null : request.body['values']['org_unit_id']['value']" )
             .transform( datasonnet( "resource:classpath:webhook.ds", String.class, "application/x-java-object", "application/json" ) )
             .to( "jms:queue:dhis2?exchangePattern=InOnly" )
-            .log( LoggingLevel.DEBUG, LOGGER, "Enqueued tracker flow run [program ID = ${header.programId}, content = ${body}]" )
+            .log( LoggingLevel.DEBUG, LOGGER, "Enqueued tracker event flow run [program ID = ${header.programId}, content = ${body}]" )
             .end();
     }   
 }

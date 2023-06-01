@@ -65,8 +65,7 @@ public class NewEnrollmentEnumerator implements Processor
         List<Map<String, Object>> results = (List<Map<String, Object>>) rapidProContacts.get( "results" );
 
         for ( TrackedEntity dhis2Enrollment : dhis2Enrollments )
-        {
-            // Extract all of the necessary fields 
+        { 
             List<Attribute__2> attributes = dhis2Enrollment.getAttributes().get();
             Optional<String> enrollment_id = dhis2Enrollment.getEnrollments().get().get(0).getEnrollment();
             Optional<String> tei_id = dhis2Enrollment.getTrackedEntity();
@@ -89,23 +88,25 @@ public class NewEnrollmentEnumerator implements Processor
 
         exchange.getMessage().setBody( newDhis2Enrollments );
     }
+
     private boolean isNotBlank( Optional<String> stringOptional )
     {
         return stringOptional.isPresent() && !stringOptional.get().isBlank();
     }
+
     private Map<String, Object> extractData(TrackedEntity tei) {
         Map<String, Object> newEnrollmentContact = new HashMap<String,Object>();
         newEnrollmentContact.put("enrollmentId",tei.getEnrollments().get().get(0).getEnrollment().get());
         newEnrollmentContact.put("orgUnit",tei.getOrgUnit().get());
         newEnrollmentContact.put("createdAt", tei.getCreatedAt().get());
         newEnrollmentContact.put("trackedEntityInstance", tei.getTrackedEntity().get());
-        newEnrollmentContact.put("whatsApp",extractWhatsAppNumber(tei.getAttributes().get()));
+        newEnrollmentContact.put("whatsapp",extractWhatsAppNumber(tei.getAttributes().get()));
         return newEnrollmentContact;
     }
     private String extractWhatsAppNumber(List<Attribute__2> attributes) {
         for ( Attribute__2 attribute : attributes ) {
             if (attribute.getAttribute().get().contains("Ggv5SazHB4y")) {
-                return attribute.getValue().get();
+                return attribute.getValue().get().substring(1);
             }
         }
         return null;

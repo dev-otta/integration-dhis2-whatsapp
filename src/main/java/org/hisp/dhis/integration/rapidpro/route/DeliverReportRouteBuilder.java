@@ -27,14 +27,20 @@
  */
 package org.hisp.dhis.integration.rapidpro.route;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.hisp.dhis.integration.rapidpro.CompleteDataSetRegistrationFunction;
 import org.hisp.dhis.integration.rapidpro.ContactOrgUnitIdAggrStrategy;
+import org.hisp.dhis.integration.rapidpro.EnrollmentAggrStrategy;
+import org.hisp.dhis.integration.rapidpro.EventIdAggrStrategy;
+import org.hisp.dhis.integration.rapidpro.ProgramStageDataElementsAggrStrategy;
 import org.hisp.dhis.integration.rapidpro.expression.RootCauseExpr;
 import org.hisp.dhis.integration.rapidpro.processor.CurrentPeriodCalculator;
 import org.hisp.dhis.integration.rapidpro.processor.IdSchemeQueryParamSetter;
+import org.hisp.dhis.integration.rapidpro.processor.EventIdFetcherQueryParamSetter;
+import org.hisp.dhis.integration.rapidpro.processor.EventIdUpdateQueryParamSetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +61,22 @@ public class DeliverReportRouteBuilder extends AbstractRouteBuilder
     private IdSchemeQueryParamSetter idSchemeQueryParamSetter;
 
     @Autowired
+    private EventIdFetcherQueryParamSetter eventIdFetcherQueryParamSetter;
+
+    @Autowired
+    private EventIdUpdateQueryParamSetter eventIdUpdateQueryParamSetter;
+
+    @Autowired
     private ContactOrgUnitIdAggrStrategy contactOrgUnitIdAggrStrategy;
+
+    @Autowired
+    private EnrollmentAggrStrategy enrollmentAggrStrategy;
+
+    @Autowired
+    private EventIdAggrStrategy eventIdAggrStrategy;
+
+    @Autowired
+    private ProgramStageDataElementsAggrStrategy programStageDataElementsAggrStrategy;
 
     @Autowired
     private CompleteDataSetRegistrationFunction completeDataSetRegistrationFunction;
@@ -92,15 +113,18 @@ public class DeliverReportRouteBuilder extends AbstractRouteBuilder
         from( "jms:queue:dhis2" )
             .routeId( "Consume Report" )
             .precondition( "'{{report.delivery.schedule.expression:}}' == ''" )
-            .to( "direct:deliverReport" );
+            .choice().when( header( "reportType").isEqualTo("aggregate"))
+                .to( "direct:deliverAggregateReport" )
+            .otherwise()
+                .to("direct:deliverEventReport");
 
-        from( "direct:deliverReport" )
-            .routeId( "Deliver Report" )
-            .to( "direct:transformReport" )
-            .to( "direct:transmitReport" );
+        from( "direct:deliverAggregateReport" )
+            .routeId( "Deliver Aggregate Report" )
+            .to( "direct:transformAggregateReport" )
+            .to( "direct:transmitAggregateReport" );
 
-        from( "direct:transformReport" )
-            .routeId( "Transform Report" )
+        from( "direct:transformAggregateReport" )
+            .routeId( "Transform Aggregate Report" )
             .errorHandler( errorHandlerDefinition )
             .streamCaching()
             .setHeader( "originalPayload", simple( "${body}" ) )
@@ -131,7 +155,7 @@ public class DeliverReportRouteBuilder extends AbstractRouteBuilder
             .process( idSchemeQueryParamSetter )
             .marshal().json().transform().body( String.class );
 
-        from( "direct:transmitReport" )
+        from( "direct:transmitAggregateReport" )
             .routeId( "Transmit Report" )
             .errorHandler( errorHandlerDefinition )
             .log( LoggingLevel.INFO, LOGGER, "Saving data value set => ${body}" )
@@ -148,6 +172,58 @@ public class DeliverReportRouteBuilder extends AbstractRouteBuilder
                 .to( "direct:dlq" )
             .end();
 
+        from("direct:deliverEventReport")
+            .routeId("Deliver Event Report")
+            .to( "direct:transformEventReport" )
+            .to( "direct:transmitEventReport" );
+
+        from("direct:transformEventReport")
+            .routeId("Transform Event Report")
+            .streamCaching()
+            .setHeader( "originalPayload", simple( "${body}" ) )
+            .unmarshal().json()
+            .setHeader( "Authorization", constant( "Token {{rapidpro.api.token}}" ) )
+            .enrich().simple( "{{rapidpro.api.url}}/contacts.json?uuid=${body[contact][uuid]}&httpMethod=GET" )
+                .aggregationStrategy( enrollmentAggrStrategy )
+            .end()
+            .removeHeader( "Authorization" )
+            .end()
+            .process( eventIdFetcherQueryParamSetter)
+            .enrich()
+            .simple("dhis2://get/resource?path=tracker/events&fields=event&client=#dhis2Client")
+            .aggregationStrategy(eventIdAggrStrategy)
+            .log( LoggingLevel.INFO, LOGGER, "Headers before transformation => ${headers}" )
+            .end()
+            .removeHeader("CamelDhis2.queryParams")
+            .enrich()
+            .simple( "dhis2://get/resource?path=programStages/${headers[programStageId]}&fields=programStageDataElements[dataElement[code]]&client=#dhis2Client" )
+            .aggregationStrategy( programStageDataElementsAggrStrategy )
+            .end()
+            .transform( datasonnet( "resource:classpath:event.ds", Map.class, "application/x-java-object",
+                "application/x-java-object" ) )
+            .process( eventIdUpdateQueryParamSetter )
+            .marshal().json().transform().body( String.class );
+            
+
+        from("direct:transmitEventReport")
+            .routeId( "Transmit Event Report" )
+            // Todo
+            // Identify the correct post uri for the DHIS2 component. (Event Update)
+            // When successfull: log successfully updated program stage: header.dhis2request
+            .errorHandler( errorHandlerDefinition )
+            .log( LoggingLevel.INFO, LOGGER, "Updating program stage event => ${body}" )
+            .setHeader( "dhisRequest", simple( "${body}" ) )
+            .toD( "dhis2://post/resource?path=tracker&inBody=resource&client=#dhis2Client" )
+            .setBody( (Function<Exchange, Object>) exchange -> exchange.getMessage().getBody( String.class ) )
+            .setHeader( "dhisResponse", simple( "${body}" ) )
+            .unmarshal().json()
+            .choice()
+            .when( simple( "${body['status']} == 'SUCCESS' || ${body['status']} == 'OK'" ) )
+                .log(LoggingLevel.INFO, LOGGER, "Success!")
+            .otherwise()
+                .log( LoggingLevel.ERROR, LOGGER, "Import error from DHIS2 while saving data value set => ${body}" )
+                //.to( "direct:dlq" )
+            .end();
         from( "direct:dlq" )
             .routeId( "Save Failed Report" )
             .setHeader( "errorMessage", rootCauseExpr )
