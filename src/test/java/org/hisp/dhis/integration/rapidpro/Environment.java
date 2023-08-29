@@ -34,23 +34,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import com.github.javafaker.DateAndTime;
 import io.restassured.builder.MultiPartSpecBuilder;
-import org.hisp.dhis.api.model.v2_38_1.DescriptiveWebMessage;
-import org.hisp.dhis.api.model.v2_38_1.ImportReport;
-import org.hisp.dhis.api.model.v2_38_1.Notification;
-import org.hisp.dhis.api.model.v2_38_1.OrganisationUnit;
-import org.hisp.dhis.api.model.v2_38_1.OrganisationUnitLevel;
-import org.hisp.dhis.api.model.v2_38_1.User;
-import org.hisp.dhis.api.model.v2_38_1.UserCredentialsDto;
-import org.hisp.dhis.api.model.v2_38_1.UserRole;
-import org.hisp.dhis.api.model.v2_38_1.WebMessage;
+import org.hisp.dhis.api.model.v2_38_1.*;
 import org.hisp.dhis.integration.sdk.Dhis2ClientBuilder;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.Dhis2Response;
@@ -79,36 +70,21 @@ import io.restassured.specification.RequestSpecification;
 public final class Environment
 {
     public static final String DHIS_IMAGE_NAME = System.getProperty( "dhis.image.name" );
-
-    public static String ORG_UNIT_ID;
-
-    public static Dhis2Client DHIS2_CLIENT;
-
-    public static GenericContainer<?> DHIS2_CONTAINER;
-
-    public static String RAPIDPRO_API_URL;
-
-    public static String RAPIDPRO_API_TOKEN;
-
     private static final Logger LOGGER = LoggerFactory.getLogger( Environment.class );
-
     private static final Network RAPIDPRO_NETWORK = Network.builder().build();
-
     private static final Network DHIS2_NETWORK = Network.builder().build();
-
-    private static GenericContainer<?> RAPIDPRO_CONTAINER;
-
-    private static GenericContainer<?> REDIS_CONTAINER;
-
-    private static GenericContainer<?> ELASTICSEARCH_CONTAINER;
-
-    private static GenericContainer<?> MAILROOM_CONTAINER;
-
+    public static String ORG_UNIT_ID;
+    public static Dhis2Client DHIS2_CLIENT;
+    public static GenericContainer<?> DHIS2_CONTAINER;
+    public static String RAPIDPRO_API_URL;
+    public static String RAPIDPRO_API_TOKEN;
     public static RequestSpecification RAPIDPRO_REQUEST_SPEC;
-
     public static RequestSpecification RAPIDPRO_API_REQUEST_SPEC;
-
     public static PostgreSQLContainer<?> DHIS2_DB_CONTAINER;
+    private static GenericContainer<?> RAPIDPRO_CONTAINER;
+    private static GenericContainer<?> REDIS_CONTAINER;
+    private static GenericContainer<?> ELASTICSEARCH_CONTAINER;
+    private static GenericContainer<?> MAILROOM_CONTAINER;
 
     static
     {
@@ -122,55 +98,62 @@ public final class Environment
 
             setUpRapidPro();
             setUpDhis2();
-        }
-        catch ( Exception e )
+        } catch (Exception e)
         {
             LOGGER.error( e.getMessage(), e );
             throw new RuntimeException( e );
         }
     }
 
+    private Environment()
+    {
+
+    }
+
     private static void setUpDhis2()
-        throws
-        IOException,
-        InterruptedException
+            throws
+            IOException,
+            InterruptedException
     {
         String dhis2ApiUrl = String.format( "http://%s:%s/api", DHIS2_CONTAINER.getHost(),
-            DHIS2_CONTAINER.getFirstMappedPort() );
+                DHIS2_CONTAINER.getFirstMappedPort() );
 
         System.setProperty( "dhis2.api.url", dhis2ApiUrl );
 
         DHIS2_CLIENT = Dhis2ClientBuilder.newClient( dhis2ApiUrl,
-                new BasicCredentialsSecurityContext( "admin", "district" ), 5, 300000L, 0L, 20000L, 20000L, 10000L )
-            .build();
+                        new BasicCredentialsSecurityContext( "admin", "district" ), 5, 300000L, 0L, 20000L, 20000L, 10000L )
+                .build();
 
         ORG_UNIT_ID = createOrgUnit();
         createOrgUnitLevel();
         String orgUnitLevelId = null;
-        for ( OrganisationUnitLevel organisationUnitLevel : DHIS2_CLIENT.get( "organisationUnitLevels" )
-            .withFields( "id" )
-            .withoutPaging().transfer().returnAs( OrganisationUnitLevel.class, "organisationUnitLevels" ) )
+        for (OrganisationUnitLevel organisationUnitLevel : DHIS2_CLIENT.get( "organisationUnitLevels" )
+                .withFields( "id" )
+                .withoutPaging().transfer().returnAs( OrganisationUnitLevel.class, "organisationUnitLevels" ))
         {
             orgUnitLevelId = organisationUnitLevel.getId().get();
         }
 
-        importMetaData( Objects.requireNonNull( orgUnitLevelId ) );
+        importMetaData( Objects.requireNonNull( orgUnitLevelId ), "IMM_AEFI_COMPLETE_1.1.0_DHIS2.36.json");
+        importMetaData( Objects.requireNonNull( orgUnitLevelId ),"MLAG00_1.2.1_DHIS2.36.json");
         addOrgUnitToAdminUser( ORG_UNIT_ID );
         addOrgUnitToDataSet( ORG_UNIT_ID );
         createDhis2Users( ORG_UNIT_ID );
         runAnalytics();
     }
 
+
+
     private static void setUpRapidPro()
-        throws
-        IOException,
-        InterruptedException
+            throws
+            IOException,
+            InterruptedException
     {
         RAPIDPRO_CONTAINER.execInContainer(
-            "sh", "-c", "python manage.py createsuperuser --username root --email admin@dhis2.org --noinput" );
+                "sh", "-c", "python manage.py createsuperuser --username root --email admin@dhis2.org --noinput" );
 
         String rapidProBaseUri = String.format( "http://%s:%s", RAPIDPRO_CONTAINER.getHost(),
-            RAPIDPRO_CONTAINER.getFirstMappedPort() );
+                RAPIDPRO_CONTAINER.getFirstMappedPort() );
 
         RAPIDPRO_API_URL = rapidProBaseUri + "/api/v2";
 
@@ -179,54 +162,50 @@ public final class Environment
         RAPIDPRO_REQUEST_SPEC = new RequestSpecBuilder().setBaseUri( rapidProBaseUri ).build();
 
         given( RAPIDPRO_REQUEST_SPEC ).contentType( ContentType.URLENC ).formParams(
-                Map.of( "first_name", "Alice", "last_name", "Wonderland", "email", "claude@dhis2.org", "password",
-                    "12345678", "timezone", "Europe/Berlin", "name", "dhis2" ) )
-            .when()
-            .post( "/org/signup/" ).then().statusCode( 302 );
+                        Map.of( "first_name", "Alice", "last_name", "Wonderland", "email", "claude@dhis2.org", "password",
+                                "12345678", "timezone", "Europe/Berlin", "name", "dhis2" ) )
+                .when()
+                .post( "/org/signup/" ).then().statusCode( 302 );
 
         importFlowUnderTest();
 
         RAPIDPRO_API_TOKEN = generateRapidProApiToken();
         RAPIDPRO_API_REQUEST_SPEC = new RequestSpecBuilder().setBaseUri( RAPIDPRO_API_URL )
-            .addHeader( "Authorization", "Token " + RAPIDPRO_API_TOKEN ).build();
+                .addHeader( "Authorization", "Token " + RAPIDPRO_API_TOKEN ).build();
         System.setProperty( "rapidpro.api.token", RAPIDPRO_API_TOKEN );
     }
 
-    private Environment()
-    {
-
-    }
-
     private static void importFlowUnderTest()
-        throws
-        IOException
+            throws
+            IOException
     {
         String flowDefinition = StreamUtils.copyToString(
-            Thread.currentThread().getContextClassLoader().getResourceAsStream( "flow.json" ),
-            Charset.defaultCharset() );
+                Thread.currentThread().getContextClassLoader().getResourceAsStream( "flow.json" ),
+                Charset.defaultCharset() );
 
         String sessionId = fetchRapidProSessionId( "claude@dhis2.org", "12345678" );
         ExtractableResponse<Response> flowImportPageResponse = given( RAPIDPRO_REQUEST_SPEC ).cookie( "sessionid",
-                sessionId ).
-            when().get( "/org/import/" ).then().statusCode( 200 ).extract();
+                        sessionId ).
+                when().get( "/org/import/" ).then().statusCode( 200 ).extract();
         String flowImportCsrfMiddlewareToken = flowImportPageResponse.htmlPath()
-            .getString( "html.body.div.div[4].div.div.div.div[3].form.input.@value" );
+                .getString( "html.body.div.div[4].div.div.div.div[3].form.input.@value" );
 
         given( RAPIDPRO_REQUEST_SPEC ).cookie( "sessionid", sessionId ).contentType( "multipart/form-data" )
-            .multiPart(
-                new MultiPartSpecBuilder( flowImportCsrfMiddlewareToken ).emptyFileName().mimeType( "text/plain" )
-                    .controlName( "csrfmiddlewaretoken" ).build() )
-            .multiPart( new MultiPartSpecBuilder( flowDefinition ).mimeType( "application/json" )
-                .header( "Content-Disposition", "form-data; name=\"import_file\"; filename=\"flow.json\"" )
-                .header( "Content-Transfer-Encoding", "binary" ).build() )
-            .when()
-            .post( "/org/import/" ).then().statusCode( 302 ).header( "Location", "/org/home/" );
+                .multiPart(
+                        new MultiPartSpecBuilder( flowImportCsrfMiddlewareToken ).emptyFileName()
+                                .mimeType( "text/plain" )
+                                .controlName( "csrfmiddlewaretoken" ).build() )
+                .multiPart( new MultiPartSpecBuilder( flowDefinition ).mimeType( "application/json" )
+                        .header( "Content-Disposition", "form-data; name=\"import_file\"; filename=\"flow.json\"" )
+                        .header( "Content-Transfer-Encoding", "binary" ).build() )
+                .when()
+                .post( "/org/import/" ).then().statusCode( 302 ).header( "Location", "/org/home/" );
     }
 
     private static void startContainers()
     {
         Stream.of( REDIS_CONTAINER, ELASTICSEARCH_CONTAINER, RAPIDPRO_CONTAINER,
-            MAILROOM_CONTAINER, DHIS2_CONTAINER ).parallel().forEach( GenericContainer::start );
+                MAILROOM_CONTAINER, DHIS2_CONTAINER ).parallel().forEach( GenericContainer::start );
     }
 
     private static void composeDhis2Containers()
@@ -234,136 +213,136 @@ public final class Environment
         DHIS2_DB_CONTAINER = newPostgreSQLContainer( "dhis2", "dhis", "dhis", DHIS2_NETWORK );
 
         DHIS2_CONTAINER = new GenericContainer<>(
-            String.format( "dhis2/core:%s", DHIS_IMAGE_NAME ) )
-            .withClasspathResourceMapping( "dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_WRITE )
-            .withClasspathResourceMapping( "dhis.conf", "/opt/dhis2/dhis.conf", BindMode.READ_WRITE )
-            .withNetwork( DHIS2_NETWORK ).withExposedPorts( 8080 )
-            .dependsOn( DHIS2_DB_CONTAINER )
-            .waitingFor( new HttpWaitStrategy().forStatusCode( 200 ).withStartupTimeout( Duration.ofMinutes( 5 ) ) )
-            .withEnv( "WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0" );
+                String.format( "dhis2/core:%s", DHIS_IMAGE_NAME ) )
+                .withClasspathResourceMapping( "dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_WRITE )
+                .withClasspathResourceMapping( "dhis.conf", "/opt/dhis2/dhis.conf", BindMode.READ_WRITE )
+                .withNetwork( DHIS2_NETWORK ).withExposedPorts( 8080 )
+                .dependsOn( DHIS2_DB_CONTAINER )
+                .waitingFor( new HttpWaitStrategy().forStatusCode( 200 ).withStartupTimeout( Duration.ofMinutes( 5 ) ) )
+                .withEnv( "WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0" );
     }
 
     private static void composeRapidProContainers()
     {
         PostgreSQLContainer<?> rapidProDbContainer = newPostgreSQLContainer( "temba", "temba", "temba",
-            RAPIDPRO_NETWORK );
+                RAPIDPRO_NETWORK );
 
         REDIS_CONTAINER = new GenericContainer<>(
-            DockerImageName.parse( "redis:6.2.6-alpine" ) )
-            .withNetworkAliases( "redis" )
-            .withExposedPorts( 6379 )
-            .withNetwork( RAPIDPRO_NETWORK );
+                DockerImageName.parse( "redis:6.2.6-alpine" ) )
+                .withNetworkAliases( "redis" )
+                .withExposedPorts( 6379 )
+                .withNetwork( RAPIDPRO_NETWORK );
 
         ELASTICSEARCH_CONTAINER = new GenericContainer<>(
-            DockerImageName.parse( "elasticsearch:6.8.23" ) )
-            .withEnv( "discovery.type", "single-node" )
-            .withNetwork( RAPIDPRO_NETWORK )
-            .withNetworkAliases( "elasticsearch" )
-            .withExposedPorts( 9200 )
-            .waitingFor( new HttpWaitStrategy().forStatusCode( 200 ) );
+                DockerImageName.parse( "elasticsearch:6.8.23" ) )
+                .withEnv( "discovery.type", "single-node" )
+                .withNetwork( RAPIDPRO_NETWORK )
+                .withNetworkAliases( "elasticsearch" )
+                .withExposedPorts( 9200 )
+                .waitingFor( new HttpWaitStrategy().forStatusCode( 200 ) );
 
         ImageFromDockerfile rapidproImage = new ImageFromDockerfile( "rapidpro:7.4.2", false ).withDockerfile(
-                Path.of( "rapidpro-docker/rapidpro/Dockerfile" ) ).withBuildArg( "RAPIDPRO_REPO", "rapidpro/rapidpro" )
-            .withBuildArg( "RAPIDPRO_VERSION", "v7.4.2" );
+                        Path.of( "rapidpro-docker/rapidpro/Dockerfile" ) ).withBuildArg( "RAPIDPRO_REPO", "rapidpro/rapidpro" )
+                .withBuildArg( "RAPIDPRO_VERSION", "v7.4.2" );
 
         RAPIDPRO_CONTAINER = new GenericContainer<>( rapidproImage )
-            .dependsOn( rapidProDbContainer )
-            .withExposedPorts( 8000 )
-            .withNetwork( RAPIDPRO_NETWORK )
-            .waitingFor( new HttpWaitStrategy().forStatusCode( 200 ).withStartupTimeout( Duration.ofMinutes( 5 ) ) )
-            .withEnv( "SECRET_KEY", "super-secret-key" )
-            .withEnv( "DATABASE_URL", "postgresql://temba:temba@db/temba" )
-            .withEnv( "REDIS_URL", "redis://redis:6379/0" )
-            .withEnv( "DJANGO_DEBUG", "on" )
-            .withEnv( "DOMAIN_NAME", "localhost" )
-            .withEnv( "MANAGEPY_COLLECTSTATIC", "on" )
-            .withEnv( "MANAGEPY_INIT_DB", "on" )
-            .withEnv( "MANAGEPY_MIGRATE", "on" )
-            .withEnv( "DJANGO_SUPERUSER_PASSWORD", "12345678" )
-            .withEnv( "MAILROOM_URL", "http://mailroom:8090" )
-            .withEnv( "MAILROOM_AUTH_TOKEN", "Gqcqvi2PGkoZMpQi" )
-            .withEnv( "ELASTICSEARCH_URL", "http://elasticsearch:9200" )
-            .withCommand( "sh", "-c",
-                "sed -i '/CsrfViewMiddleware/s/^/#/g' temba/settings_common.py && /startup.sh" );
+                .dependsOn( rapidProDbContainer )
+                .withExposedPorts( 8000 )
+                .withNetwork( RAPIDPRO_NETWORK )
+                .waitingFor( new HttpWaitStrategy().forStatusCode( 200 ).withStartupTimeout( Duration.ofMinutes( 5 ) ) )
+                .withEnv( "SECRET_KEY", "super-secret-key" )
+                .withEnv( "DATABASE_URL", "postgresql://temba:temba@db/temba" )
+                .withEnv( "REDIS_URL", "redis://redis:6379/0" )
+                .withEnv( "DJANGO_DEBUG", "on" )
+                .withEnv( "DOMAIN_NAME", "localhost" )
+                .withEnv( "MANAGEPY_COLLECTSTATIC", "on" )
+                .withEnv( "MANAGEPY_INIT_DB", "on" )
+                .withEnv( "MANAGEPY_MIGRATE", "on" )
+                .withEnv( "DJANGO_SUPERUSER_PASSWORD", "12345678" )
+                .withEnv( "MAILROOM_URL", "http://mailroom:8090" )
+                .withEnv( "MAILROOM_AUTH_TOKEN", "Gqcqvi2PGkoZMpQi" )
+                .withEnv( "ELASTICSEARCH_URL", "http://elasticsearch:9200" )
+                .withCommand( "sh", "-c",
+                        "sed -i '/CsrfViewMiddleware/s/^/#/g' temba/settings_common.py && /startup.sh" );
 
         ImageFromDockerfile mailroomImage = new ImageFromDockerfile( "mailroom:7.4.1", false ).withDockerfile(
-                Path.of( "rapidpro-docker/mailroom/Dockerfile" ) ).withBuildArg( "MAILROOM_REPO", "rapidpro/mailroom" )
-            .withBuildArg( "MAILROOM_VERSION", "7.4.1" );
+                        Path.of( "rapidpro-docker/mailroom/Dockerfile" ) ).withBuildArg( "MAILROOM_REPO", "rapidpro/mailroom" )
+                .withBuildArg( "MAILROOM_VERSION", "7.4.1" );
 
         MAILROOM_CONTAINER = new GenericContainer<>(
-            mailroomImage )
-            .withNetwork( RAPIDPRO_NETWORK )
-            .withExposedPorts( 8090 )
-            .withNetworkAliases( "mailroom" )
-            .withEnv( "MAILROOM_DOMAIN", "mailroom" )
-            .withEnv( "MAILROOM_ELASTIC", "http://elasticsearch:9200" )
-            .withEnv( "MAILROOM_ATTACHMENT_DOMAIN", "mailroom" )
-            .withEnv( "MAILROOM_AUTH_TOKEN", "Gqcqvi2PGkoZMpQi" )
-            .withEnv( "MAILROOM_DB", "postgres://temba:temba@db/temba?sslmode=disable" )
-            .withEnv( "MAILROOM_REDIS", "redis://redis:6379/0" )
-            .withCommand( "mailroom", "--address", "0.0.0.0" );
+                mailroomImage )
+                .withNetwork( RAPIDPRO_NETWORK )
+                .withExposedPorts( 8090 )
+                .withNetworkAliases( "mailroom" )
+                .withEnv( "MAILROOM_DOMAIN", "mailroom" )
+                .withEnv( "MAILROOM_ELASTIC", "http://elasticsearch:9200" )
+                .withEnv( "MAILROOM_ATTACHMENT_DOMAIN", "mailroom" )
+                .withEnv( "MAILROOM_AUTH_TOKEN", "Gqcqvi2PGkoZMpQi" )
+                .withEnv( "MAILROOM_DB", "postgres://temba:temba@db/temba?sslmode=disable" )
+                .withEnv( "MAILROOM_REDIS", "redis://redis:6379/0" )
+                .withCommand( "mailroom", "--address", "0.0.0.0" );
     }
 
-    private static PostgreSQLContainer<?> newPostgreSQLContainer( String databaseName,
-        String username, String password, Network network )
+    private static PostgreSQLContainer<?> newPostgreSQLContainer(String databaseName,
+                                                                 String username, String password, Network network)
     {
         return new PostgreSQLContainer<>(
-            DockerImageName.parse( "postgis/postgis:12-3.2-alpine" ).asCompatibleSubstituteFor( "postgres" ) )
-            .withDatabaseName( databaseName )
-            .withNetworkAliases( "db" )
-            .withUsername( username )
-            .withPassword( password ).withNetwork( network );
+                DockerImageName.parse( "postgis/postgis:12-3.2-alpine" ).asCompatibleSubstituteFor( "postgres" ) )
+                .withDatabaseName( databaseName )
+                .withNetworkAliases( "db" )
+                .withUsername( username )
+                .withPassword( password ).withNetwork( network );
     }
 
     public static void runAnalytics()
-        throws
-        InterruptedException,
-        IOException
+            throws
+            InterruptedException,
+            IOException
     {
         DHIS2_CLIENT.post( "maintenance" ).withParameter( "cacheClear", "true" )
-            .transfer().close();
+                .transfer().close();
 
         WebMessage webMessage = DHIS2_CLIENT.post( "resourceTables/analytics" ).transfer()
-            .returnAs( WebMessage.class );
+                .returnAs( WebMessage.class );
         String taskId = (String) ((Map<String, Object>) webMessage.getResponse().get()).get( "id" );
 
         Notification notification = null;
-        while ( notification == null || !(Boolean) notification.getCompleted().get() )
+        while (notification == null || !(Boolean) notification.getCompleted().get())
         {
             Thread.sleep( 5000 );
             Iterable<Notification> notifications = DHIS2_CLIENT.get( "system/tasks/ANALYTICS_TABLE/{taskId}",
-                taskId ).withoutPaging().transfer().returnAs( Notification.class );
-            if ( notifications.iterator().hasNext() )
+                    taskId ).withoutPaging().transfer().returnAs( Notification.class );
+            if (notifications.iterator().hasNext())
             {
                 notification = notifications.iterator().next();
             }
         }
     }
 
-    private static void addOrgUnitToAdminUser( String orgUnitId )
-        throws
-        IOException
+    private static void addOrgUnitToAdminUser(String orgUnitId)
+            throws
+            IOException
     {
         DHIS2_CLIENT.post( "users/M5zQapPyTZI/organisationUnits/{organisationUnitId}", orgUnitId ).transfer().close();
     }
 
-    private static void addOrgUnitToDataSet( String orgUnitId )
-        throws
-        IOException
+    private static void addOrgUnitToDataSet(String orgUnitId)
+            throws
+            IOException
     {
         DHIS2_CLIENT.post( "dataSets/qNtxTrp56wV/organisationUnits/{orgUnitId}", orgUnitId )
-            .transfer()
-            .close();
+                .transfer()
+                .close();
 
         DHIS2_CLIENT.post( "dataSets/VEM58nY22sO/organisationUnits/{orgUnitId}", orgUnitId )
-            .transfer()
-            .close();
+                .transfer()
+                .close();
     }
 
-    public static void createDhis2Users( String orgUnitId )
+    public static void createDhis2Users(String orgUnitId)
     {
         int phoneNumber = 21000000;
-        for ( int i = 0; i < 10; i++ )
+        for (int i = 0; i < 10; i++)
         {
             createDhis2User( orgUnitId, "00356" + phoneNumber );
             phoneNumber++;
@@ -371,57 +350,86 @@ public final class Environment
     }
 
     public static void deleteDhis2Users()
-        throws
-        IOException
+            throws
+            IOException
     {
         Iterable<User> usersIterable = Environment.DHIS2_CLIENT.get( "users" ).withFilter( "phoneNumber:!null" )
-            .withFields( "*" ).withoutPaging()
-            .transfer()
-            .returnAs( User.class, "users" );
+                .withFields( "*" ).withoutPaging()
+                .transfer()
+                .returnAs( User.class, "users" );
 
-        for ( User user : usersIterable )
+        for (User user : usersIterable)
         {
             Environment.DHIS2_CLIENT.delete( "users/{id}", user.getId().get() ).transfer().close();
         }
     }
 
-    public static String createDhis2User( String orgUnitId, String phoneNumber )
+    public static String createDhis2User(String orgUnitId, String phoneNumber)
     {
         Faker faker = new Faker();
         Name name = faker.name();
 
         Dhis2Response dhis2Response = DHIS2_CLIENT.post( "users" )
-            .withResource( new User().withFirstName( name.firstName() ).withSurname( name.lastName() )
-                .withPhoneNumber( phoneNumber )
-                .withAttributeValues( Collections.emptyList() )
-                .withOrganisationUnits( List.of( new OrganisationUnit().withId( orgUnitId ) ) )
-                .withUserCredentials(
-                    new UserCredentialsDto().withCatDimensionConstraints( Collections.emptyList() )
-                        .withCogsDimensionConstraints( Collections.emptyList() ).withUsername( name.username() )
-                        .withPassword( "aKa9CD8HyAi8Y7!" ).withUserRoles(
-                            List.of( new UserRole().withId( "yrB6vc5Ip3r" ) ) ) ) )
-            .transfer();
+                .withResource( new User().withFirstName( name.firstName() ).withSurname( name.lastName() )
+                        .withPhoneNumber( phoneNumber )
+                        .withAttributeValues( Collections.emptyList() )
+                        .withOrganisationUnits( List.of( new OrganisationUnit().withId( orgUnitId ) ) )
+                        .withUserCredentials(
+                                new UserCredentialsDto().withCatDimensionConstraints( Collections.emptyList() )
+                                        .withCogsDimensionConstraints( Collections.emptyList() )
+                                        .withUsername( name.username() )
+                                        .withPassword( "aKa9CD8HyAi8Y7!" ).withUserRoles(
+                                                List.of( new UserRole().withId( "yrB6vc5Ip3r" ) ) ) ) )
+                .transfer();
 
         return (String) ((Map<String, Object>) dhis2Response.returnAs(
-                WebMessage.class )
-            .getResponse().get()).get( "uid" );
+                        WebMessage.class )
+                .getResponse().get()).get( "uid" );
+    }
+    public static String createDhis2TrackedEntity(String orgUnitId, String phoneNumber)
+    {
+        Faker faker = new Faker();
+        Name name = faker.name();
+        String firstName = name.firstName(); // sB1IHYu2xQT
+        String lastName = name.lastName(); // ENRjVGxVL6l
+        String patientUID = faker.idNumber().toString(); // HlKXyR5qr2e
+        String contactPhoneNumber = phoneNumber; // fctSQp5nAYl
+        String dateOfBirth = faker.date().birthday(0,70).toString(); // NI0QRzJvQ0k
+        String gender = "Male"; // oindugucx72
+        List<Attribute__2> attributes = new ArrayList<>();
+        attributes.add(new Attribute__2().withAttribute( "sB1IHYu2xQT" ).withValue( firstName ));
+        attributes.add(new Attribute__2().withAttribute( "ENRjVGxVL6l" ).withValue( lastName ));
+        attributes.add(new Attribute__2().withAttribute( "HlKXyR5qr2e" ).withValue( patientUID ));
+        attributes.add(new Attribute__2().withAttribute( "fctSQp5nAYl" ).withValue( contactPhoneNumber ));
+        attributes.add(new Attribute__2().withAttribute( "NI0QRzJvQ0k" ).withValue( dateOfBirth ));
+        attributes.add(new Attribute__2().withAttribute( "oindugucx72" ).withValue( gender ));
+
+        Dhis2Response dhis2Response = DHIS2_CLIENT.post( "tracker" )
+                .withResource( new TrackedEntity().withAttributes( attributes )
+                        .withOrgUnit( new OrganisationUnit().withId( orgUnitId ).toString() )
+                        .withTrackedEntityType( "MCPQUTHX1Ze" ))
+                .transfer();
+
+        return (String) ((Map<String, Object>) dhis2Response.returnAs(
+                        WebMessage.class )
+                .getResponse().get()).get( "reference" );
     }
 
-    private static String fetchRapidProSessionId( String username, String password )
+    private static String fetchRapidProSessionId(String username, String password)
     {
         ExtractableResponse<Response> loginPageResponse = given( RAPIDPRO_REQUEST_SPEC ).when()
-            .get( "/users/login/" ).then().statusCode( 200 ).extract();
+                .get( "/users/login/" ).then().statusCode( 200 ).extract();
 
         String csrfMiddlewareToken = loginPageResponse.htmlPath()
-            .getString( "html.body.div.div[3].div.div.div[1].div.div.form.input.@value" );
+                .getString( "html.body.div.div[3].div.div.div[1].div.div.form.input.@value" );
         String csrfToken = loginPageResponse.cookie( "csrftoken" );
 
         return given( RAPIDPRO_REQUEST_SPEC ).contentType( ContentType.URLENC )
-            .cookie( "csrftoken", csrfToken )
-            .formParams( Map.of( "csrfmiddlewaretoken", csrfMiddlewareToken,
-                "username", username, "password", password ) )
-            .when()
-            .post( "/users/login/" ).then().statusCode( 302 ).extract().cookie( "sessionid" );
+                .cookie( "csrftoken", csrfToken )
+                .formParams( Map.of( "csrfmiddlewaretoken", csrfMiddlewareToken,
+                        "username", username, "password", password ) )
+                .when()
+                .post( "/users/login/" ).then().statusCode( 302 ).extract().cookie( "sessionid" );
     }
 
     private static String generateRapidProApiToken()
@@ -429,42 +437,42 @@ public final class Environment
         String sessionId = fetchRapidProSessionId( "root", "12345678" );
 
         return given( RAPIDPRO_REQUEST_SPEC )
-            .cookie( "sessionid", sessionId ).when()
-            .post( "/api/apitoken/refresh/" ).then().statusCode( 200 ).extract().path( "token" );
+                .cookie( "sessionid", sessionId ).when()
+                .post( "/api/apitoken/refresh/" ).then().statusCode( 200 ).extract().path( "token" );
     }
 
-    private static void importMetaData( String orgUnitLevelId )
-        throws
-        IOException
+    private static void importMetaData(String orgUnitLevelId, String resourceName)
+            throws
+            IOException
     {
         String metaData = StreamUtils.copyToString(
-                Thread.currentThread().getContextClassLoader().getResourceAsStream( "MLAG00_1.2.1_DHIS2.36.json" ),
-                Charset.defaultCharset() ).replaceAll( "<OU_LEVEL_DISTRICT_UID>", orgUnitLevelId )
-            .replaceAll( "<OU_LEVEL_FACILITY_UID>", orgUnitLevelId );
+                        Thread.currentThread().getContextClassLoader().getResourceAsStream( resourceName ),
+                        Charset.defaultCharset() ).replaceAll( "<OU_LEVEL_DISTRICT_UID>", orgUnitLevelId )
+                .replaceAll( "<OU_LEVEL_FACILITY_UID>", orgUnitLevelId );
 
         WebMessage webMessage = DHIS2_CLIENT.post( "metadata" )
-            .withResource( metaData )
-            .withParameter( "atomicMode", "NONE" ).transfer().returnAs( WebMessage.class );
+                .withResource( metaData )
+                .withParameter( "atomicMode", "NONE" ).transfer().returnAs( WebMessage.class );
 
         assertEquals( DescriptiveWebMessage.Status.OK, webMessage.getStatus().get() );
     }
 
     private static void createOrgUnitLevel()
-        throws
-        IOException
+            throws
+            IOException
     {
         DHIS2_CLIENT.post( "filledOrganisationUnitLevels" )
-            .withResource( Map.of( "organisationUnitLevels",
-                List.of( new OrganisationUnitLevel().withName( "Level 1" ).withLevel( 1 ) ) ) )
-            .transfer().close();
+                .withResource( Map.of( "organisationUnitLevels",
+                        List.of( new OrganisationUnitLevel().withName( "Level 1" ).withLevel( 1 ) ) ) )
+                .transfer().close();
     }
 
     private static String createOrgUnit()
     {
         return (String) ((Map<String, Object>) DHIS2_CLIENT.post( "organisationUnits" ).withResource(
-                new OrganisationUnit().withName( "Acme" ).withCode( "ACME" ).withShortName( "Acme" )
-                    .withOpeningDate( new Date( 964866178L ) ) ).transfer()
-            .returnAs( WebMessage.class ).getResponse().get()).get( "uid" );
+                        new OrganisationUnit().withName( "Acme" ).withCode( "ACME" ).withShortName( "Acme" )
+                                .withOpeningDate( new Date( 964866178L ) ) ).transfer()
+                .returnAs( WebMessage.class ).getResponse().get()).get( "uid" );
     }
 
 }

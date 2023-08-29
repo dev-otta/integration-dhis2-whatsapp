@@ -39,13 +39,12 @@ import org.springframework.test.context.TestPropertySource;
 
 import static io.restassured.RestAssured.given;
 
-@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT )
-@ActiveProfiles( "test" )
-@TestPropertySource( properties = { "dhis2.api.url=http://dhis2.test/api", "rapidpro.api.token=3048a3b9a04c1948aa5a7fd06e7592ba5a17d3d0", "rapidpro.api.url=http://rapidpro.test/api/v2",
-    "test.connection.startup=false", "camel.springboot.auto-startup=false" } )
-@DirtiesContext( classMode = DirtiesContext.ClassMode.AFTER_CLASS )
-public class HawtioWebConsoleTestCase
-{
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@TestPropertySource(properties = {"dhis2.api.url=http://dhis2.test/api", "rapidpro.api.token=3048a3b9a04c1948aa5a7fd06e7592ba5a17d3d0", "rapidpro.api.url=http://rapidpro.test/api/v2",
+        "test.connection.startup=false", "camel.springboot.auto-startup=false"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class HawtioWebConsoleTestCase {
     @LocalServerPort
     private int serverPort;
 
@@ -55,7 +54,7 @@ public class HawtioWebConsoleTestCase
     public void beforeEach()
     {
         hawtioRequestSpec = new RequestSpecBuilder().setBaseUri(
-            String.format( "http://localhost:%s/dhis2rapidpro/management/hawtio", serverPort ) ).setRelaxedHTTPSValidation().build();
+                String.format( "http://localhost:%s/dhis2rapidpro/management/hawtio", serverPort ) ).setRelaxedHTTPSValidation().build();
     }
 
     @Test
@@ -68,6 +67,6 @@ public class HawtioWebConsoleTestCase
     public void testAuthorisedHttpGet()
     {
         given( hawtioRequestSpec ).auth().basic( "dhis2rapidpro", "dhis2rapidpro" ).get().then()
-            .statusCode( 200 );
+                                  .statusCode( 200 );
     }
 }

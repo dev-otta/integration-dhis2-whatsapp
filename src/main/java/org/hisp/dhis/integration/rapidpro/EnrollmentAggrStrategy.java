@@ -37,23 +37,22 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class EnrollmentAggrStrategy implements AggregationStrategy
-{
+public class EnrollmentAggrStrategy implements AggregationStrategy {
     protected static final Logger LOGGER = LoggerFactory.getLogger( EnrollmentAggrStrategy.class );
 
     @Override
-    public Exchange aggregate( Exchange oldExchange, Exchange newExchange )
-    {
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         String contact = newExchange.getMessage().getBody( String.class );
         String contactUuid = (String) ((Map<String, Object>) oldExchange.getMessage().getBody( Map.class )
-            .get( "contact" )).get( "uuid" );
+                .get( "contact" )).get( "uuid" );
         LOGGER.debug( String.format( "Fetched contact %s => %s ", contactUuid, contact ) );
         oldExchange.getMessage()
-            .setHeader( "orgUnitId", JsonPath.read( contact, "$.results[0].fields.dhis2_organisation_unit_id" ));
+                .setHeader( "orgUnitId", JsonPath.read( contact, "$.results[0].fields.dhis2_organisation_unit_id" ) );
         oldExchange.getMessage()
-            .setHeader("trackedEntityInstanceId", JsonPath.read( contact,"$.results[0].fields.dhis2_tracked_entity_instance_id"));
+                .setHeader( "trackedEntityInstanceId",
+                        JsonPath.read( contact, "$.results[0].fields.dhis2_tracked_entity_instance_id" ) );
         oldExchange.getMessage()
-            .setHeader("enrollmentId", JsonPath.read( contact,"$.results[0].fields.dhis2_enrollment_id"));
+                .setHeader( "enrollmentId", JsonPath.read( contact, "$.results[0].fields.dhis2_enrollment_id" ) );
         return oldExchange;
     }
 }

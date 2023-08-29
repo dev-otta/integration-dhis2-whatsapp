@@ -35,16 +35,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EventIdAggrStrategy implements AggregationStrategy {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(EventIdAggrStrategy.class);
+public class EventIdAggrStrategy implements AggregationStrategy
+{
+    protected static final Logger LOGGER = LoggerFactory.getLogger( EventIdAggrStrategy.class );
 
     @Override
-    public Exchange aggregate( Exchange oldExchange, Exchange newExchange )
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange)
     {
-        String event = newExchange.getMessage().getBody(String.class);
-        
-        oldExchange.getMessage()
-            .setHeader( "eventId", JsonPath.read( event, "$.instances[0].event" ));
+        String event = newExchange.getMessage().getBody( String.class );
+
+        oldExchange.getMessage().setHeader( "eventId", JsonPath.read( event, "$.instances[0].event" ) );
 
         return oldExchange;
     }

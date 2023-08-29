@@ -100,13 +100,13 @@ public class NewEnrollmentEnumerator implements Processor
         newEnrollmentContact.put("orgUnit",tei.getOrgUnit().get());
         newEnrollmentContact.put("createdAt", tei.getCreatedAt().get());
         newEnrollmentContact.put("trackedEntityInstance", tei.getTrackedEntity().get());
-        newEnrollmentContact.put("whatsapp",extractWhatsAppNumber(tei.getAttributes().get()));
+        newEnrollmentContact.put("whatsApp",extractWhatsAppNumber(tei.getAttributes().get()));
         return newEnrollmentContact;
     }
     private String extractWhatsAppNumber(List<Attribute__2> attributes) {
         for ( Attribute__2 attribute : attributes ) {
             if (attribute.getAttribute().get().contains("Ggv5SazHB4y")) {
-                return attribute.getValue().get().substring(1);
+                return attribute.getValue().get();
             }
         }
         return null;

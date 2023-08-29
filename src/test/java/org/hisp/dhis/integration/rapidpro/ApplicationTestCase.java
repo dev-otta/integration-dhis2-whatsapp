@@ -73,7 +73,7 @@ public class ApplicationTestCase
     @ParameterizedTest
     @ValueSource( strings = { "dhis2.api.pat", "dhis2.api.password", "rapidpro.api.token",
         "spring.security.user.password", "spring.datasource.password" } )
-    public void testPostConstructTerminatesGivenGivenSecretInCommandLineArgument( String argumentName )
+    public void testPostConstructTerminatesGivenSecretInCommandLineArgument( String argumentName )
     {
         Application application = new Application()
         {
